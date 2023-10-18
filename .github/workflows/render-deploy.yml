@@ -7,11 +7,11 @@ on:
 
 jobs:
   simple_deployment_pipeline:
-  runs-on: ubuntu-latest
-  steps:
-    - name: Trigger deployment
-      run: curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
-  
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger deployment
+        run: curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+
   tag_release:
     if: ${{ github.ref == 'refs/heads/master' }}
     needs: [simple_deployment_pipeline]
