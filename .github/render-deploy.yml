@@ -1,0 +1,34 @@
+name: Deploy to Render
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  simple_deployment_pipeline:
+  runs-on: ubuntu-latest
+  steps:
+    - name: Trigger deployment
+      run: curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+  
+  tag_release:
+    if: ${{ github.ref == 'refs/heads/master' }}
+    needs: [simple_deployment_pipeline]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Checking whether version bump needs to be skipped
+        env:
+          COMMIT_MESSAGES_CONTAIN_SKIP_KEYWORD: ${{ contains(join(toJson(github.event.commits.*.message), ','), '#skip') }}
+        run: echo "Commit messages contains skip keyowrd:\ $COMMIT_MESSAGES_CONTAIN_SKIP_KEYWORD"
+
+      - name: Bump version and push tag
+        if: ${{ !contains(join(toJson(github.event.commits.*.message), ','), '#skip') }}
+        uses: anothrNick/github-tag-action@1.64.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
+          INITIAL_VERSION: 0.13.13
+          WITH_V: true
