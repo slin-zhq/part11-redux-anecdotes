@@ -1,0 +1,1 @@
+This `README` is created for the sole purpose of finishing the exercise 11.21, where the course instructor [mluukkai](https://github.com/mluukkai) is invited to review the code.
